@@ -26,7 +26,7 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
 .section-head { display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom:12px; }
 .section-head h2 { margin:0; font-size:22px; }
 .section-head p { margin:0; color:var(--muted); }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; }
 .card { background:linear-gradient(180deg, rgba(18,31,55,0.98), rgba(10,19,33,0.98)); border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:0 10px 25px rgba(0,0,0,0.25); }
 .card.is-playable { cursor:pointer; }
 .card.is-playable:hover { outline:2px solid rgba(56,189,248,0.35); }
@@ -52,6 +52,34 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
 .modal-close { position:absolute; top:10px; right:10px; width:40px; height:40px; border-radius:10px; background:rgba(15,23,42,0.85); color:#fff; font-size:22px; cursor:pointer; z-index:2; }
 .modal-frame { aspect-ratio:16/9; width:100%; background:#000; }
 .modal-frame iframe { width:100%; height:100%; display:block; }
+
+/* PDF cards */
+.pdf-badge {
+  display: inline-block;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  z-index: 1;
+}
+.card.is-pdf { cursor: default; }
+.card.is-pdf:hover { outline: 2px solid rgba(239,68,68,0.35); }
+.card.is-pdf .action {
+  background: rgba(239,68,68,0.15);
+  border-color: rgba(239,68,68,0.4);
+  color: #fca5a5;
+  text-decoration: none;
+}
+.card.is-pdf .action:hover {
+  background: rgba(239,68,68,0.3);
+  text-decoration: none;
+}
 </style>
 </head>
 <body>
@@ -341,7 +369,7 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
             <p class="actions"><span class="action">Play video</span></p>
           </div>
         </article>
-        <!-- Video 32: 1173730082 -->
+      <!-- Video 32: 1173730082 -->
         <article class="card is-playable" data-vimeo-id="1173730082" data-title="Revolutionising Field Service Operations: Digital Fleet Management">
           <div class="poster" style="background-image: url('thumbnails/1173730082.jpg');">
             <img class="poster-logo" src="directtrack-logo.gif" alt="" aria-hidden="true">
@@ -458,7 +486,7 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
             <p class="actions"><span class="action">Play video</span></p>
           </div>
         </article>
-       <!-- Video 48: 1173729624 -->
+      <!-- Video 48: 1173729624 -->
         <article class="card is-playable" data-vimeo-id="1173729624" data-title="Green & Safe driving">
           <div class="poster" style="background-image: url('thumbnails/1173729624.jpg');">
             <img class="poster-logo" src="directtrack-logo.gif" alt="" aria-hidden="true">
@@ -512,7 +540,7 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
             <p class="actions"><span class="action">Play video</span></p>
           </div>
         </article>
-       <!-- Video 56: 1173729464 -->
+     <!-- Video 56: 1173729464 -->
         <article class="card is-playable" data-vimeo-id="1173729464" data-title="Creating Reports">
           <div class="poster" style="background-image: url('thumbnails/1173729464.jpg');">
             <img class="poster-logo" src="directtrack-logo.gif" alt="" aria-hidden="true">
@@ -611,6 +639,18 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
             <p class="actions"><span class="action">Play video</span></p>
           </div>
         </article>
+        <!-- PDF: Webfleet Quick Start Guide -->
+        <article class="card is-pdf" data-type="pdf" data-title="Webfleet Quick Start Guide" data-category="Setup &amp; Configuration">
+          <div class="poster" style="background-image: url('thumbnails/pdf-quick-start.jpg'); background-color: #1e3a5f;">
+            <span class="pdf-badge">PDF</span>
+            <img class="poster-logo" src="directtrack-logo.gif" alt="" aria-hidden="true">
+          </div>
+          <div class="card-body">
+            <p class="actions">
+              <a class="action" href="docs/webfleet-quick-start-guide.pdf" target="_blank" rel="noopener">Open PDF</a>
+            </p>
+          </div>
+        </article>
       </div>
     </section>
   </main>
@@ -687,7 +727,7 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
 
     // Function to reorganize the page by categories (DEFAULT VIEW)
     function reorganizeByCategory() {
-      const cards = Array.from(document.querySelectorAll('.card.is-playable'));
+      const cards = Array.from(document.querySelectorAll('.card.is-playable, .card.is-pdf'));
       
       // Group cards by category
       const categories = {};
@@ -695,7 +735,7 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
       cards.forEach(card => {
         const title = card.dataset.title || '';
         const vimeoId = card.dataset.vimeoId;
-        const category = getVideoCategory(title, vimeoId);
+        const category = card.dataset.category || getVideoCategory(title, vimeoId);
         
         card.dataset.category = category;
         
@@ -724,12 +764,18 @@ h1 { margin:0; font-size:32px; line-height:1.1; }
         
         const sectionHead = document.createElement('div');
         sectionHead.className = 'section-head';
+        const pdfCount = videos.filter(c => c.classList.contains('is-pdf')).length;
+        const videoCount = videos.length - pdfCount;
+        let countLabel = '';
+        if (videoCount > 0 && pdfCount > 0) countLabel = `${videoCount} videos, ${pdfCount} PDF`;
+        else if (pdfCount > 0) countLabel = `${pdfCount} PDF`;
+        else countLabel = `${videoCount} videos`;
         sectionHead.innerHTML = `
           <div>
             <p class="eyebrow">Category</p>
             <h2>${categoryName}</h2>
           </div>
-          <p>${videos.length} videos</p>
+          <p>${countLabel}</p>
         `;
         
         const grid = document.createElement('div');
