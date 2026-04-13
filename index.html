@@ -9,7 +9,7 @@
 :root { --bg:#0d0d10; --panel:rgba(18,18,22,0.92); --line:rgba(148,163,184,0.1); --text:#e2e8f0; --muted:#8892a4; --accent:#38bdf8; --accent2:#818cf8; --red:#ef4444; --sidebar-bg:#4d5b67; --card-gap:8px; --card-w:180px; }
 * { box-sizing:border-box; margin:0; padding:0; }
 body { font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
-
+lcs 100
 /* Animated gradient mesh bg */
 body::before { content:''; position:fixed; inset:0; z-index:-1; background:
   radial-gradient(ellipse 80% 60% at 15% 50%, rgba(56,189,248,0.04) 0%, transparent 60%),
@@ -328,11 +328,6 @@ h1 { font-size:28px; font-weight:700; letter-spacing:-0.02em; }
       <div class="modal-frame"><iframe id="vimeoPlayer" src="" allow="autoplay; fullscreen" allowfullscreen=""></iframe></div>
     </div>
   </div>
-
-//  <button class="tooltip-fab" id="tooltipFab" type="button" aria-pressed="false" title="Edit cards">
- //   <span class="tooltip-fab-dot"></span>
-  //  <span class="tooltip-fab-text">✏️ Edit Cards</span>
-//  </button>
 
   <div class="modal" id="tooltipModal">
     <div class="modal-backdrop" data-tooltip-close="true"></div>
